@@ -1,0 +1,6 @@
+/target
+*.ipynb
+.cache
+*.json
+test*
+.DS_Store
