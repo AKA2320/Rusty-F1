@@ -1,5 +1,5 @@
 import fastf1
-fastf1.Cache.enable_cache('.cache') 
+# fastf1.Cache.enable_cache('.cache') 
 import json
 import os
 
