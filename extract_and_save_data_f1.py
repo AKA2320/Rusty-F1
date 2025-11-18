@@ -1,6 +1,7 @@
 import fastf1
 fastf1.Cache.enable_cache('.cache') 
 import json
+import os
 
 
 session = fastf1.get_session(2023,'Monza','R')
@@ -28,20 +29,21 @@ rotation = session.get_circuit_info().rotation # FLOAT
 
 
 # Saving
-with open('drivers_list.json', 'w') as f:
+os.makedirs('data', exist_ok=True)
+with open('data/drivers_list.json', 'w') as f:
     json.dump(drivers_list, f)
 
-with open('abv.json', 'w') as f:
+with open('data/abv.json', 'w') as f:
     json.dump(abv, f)
 
-with open('team_colors.json', 'w') as f:
+with open('data/team_colors.json', 'w') as f:
     json.dump(team_colors, f)
 
-with open('positional_data_dict.json', 'w') as f:
+with open('data/positional_data_dict.json', 'w') as f:
     json.dump(positional_data_dict, f)
 
-with open('rotation.json', 'w') as f:
+with open('data/rotation.json', 'w') as f:
     json.dump(rotation, f)
 
-with open('fastest_lap_pos.json', 'w') as f:
+with open('data/fastest_lap_pos.json', 'w') as f:
     json.dump(fastest_lap_pos, f)
