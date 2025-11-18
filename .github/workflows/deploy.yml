@@ -63,4 +63,4 @@ jobs:
         run: |
           gh auth login --with-token "${{ secrets.GITHUB_TOKEN }}"
           TAG=viz-$(date '+%Y%m%d-%H%M%S')
-          gh release create "$TAG" track.html --title "Visualization $TAG" --notes "Auto-generated visualization file for offline testing." --generate-notes
+          gh release create "$TAG" track.html --title "Visualization $TAG" --notes "Auto-generated visualization file for offline testing."

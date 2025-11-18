@@ -73,8 +73,3 @@ pub fn load_winner_abv(winner_path: &str) -> String{
     let winner_abv: String = serde_json::from_str(&data).expect(&format!("Unable to parse winner abbreviation JSON from: {winner_path}"));
     winner_abv
 }
-
-pub fn rotate2d(xy: Array2<f64>, angle: f64) -> Array2<f64>{
-    let rot_mat = array![[angle.cos(), angle.sin()], [-angle.sin(), angle.cos()]];
-    xy.dot(&rot_mat)
-}
