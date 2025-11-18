@@ -26,12 +26,15 @@ fastest_lap_pos = fastest_lap_pos[['X', 'Y']].to_dict()
 
 rotation = session.get_circuit_info().rotation # FLOAT
 
-
+winner = results[(results['Position'] == 1.0) | (results['Position'] == 1)]['Abbreviation'].iloc[0]
 
 # Saving
 os.makedirs('data', exist_ok=True)
 with open('data/drivers_list.json', 'w') as f:
     json.dump(drivers_list, f)
+
+with open('data/winner.json', 'w') as f:
+    json.dump(winner, f)
 
 with open('data/abv.json', 'w') as f:
     json.dump(abv, f)
