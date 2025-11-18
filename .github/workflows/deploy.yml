@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -57,3 +57,10 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+      - name: Create Release (if manual trigger)
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          gh auth login --with-token "${{ secrets.GITHUB_TOKEN }}"
+          TAG=viz-$(date '+%Y%m%d-%H%M%S')
+          gh release create "$TAG" track.html --title "Visualization $TAG" --notes "Auto-generated visualization file for offline testing." --generate-notes
