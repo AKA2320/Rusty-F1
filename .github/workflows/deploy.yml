@@ -60,7 +60,11 @@ jobs:
 
       - name: Create Release (if manual trigger)
         if: github.event_name == 'workflow_dispatch'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ github.ref_name }}
         run: |
-          gh auth login --with-token "${{ secrets.GITHUB_TOKEN }}"
-          TAG=viz-$(date '+%Y%m%d-%H%M%S')
-          gh release create "$TAG" track.html --title "Visualization $TAG" --notes "Auto-generated visualization file for offline testing."
+          gh release create "$tag" \
+              --repo="$GITHUB_REPOSITORY" \
+              --title="${GITHUB_REPOSITORY#*/} ${tag#v}" \
+              --generate-notes
