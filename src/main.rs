@@ -89,12 +89,12 @@ fn main() {
 
     let xy = df_with_pos.select(["X", "Y"]).unwrap().to_ndarray::<Float64Type>(IndexOrder::Fortran).unwrap();
     
-    let frames_vec: Vec<i32> = df_with_pos.column("Frame").unwrap().unique().unwrap().sort(SortOptions::default()).unwrap().i32().unwrap().into_no_null_iter().collect();
-    // let frames_vec: Vec<i32> = (0..5000).collect();
+    // let frames_vec: Vec<i32> = df_with_pos.column("Frame").unwrap().unique().unwrap().sort(SortOptions::default()).unwrap().i32().unwrap().into_no_null_iter().collect();
+    let frames_vec: Vec<i32> = (0..9000).collect();
     let rotated = rotate2d(xy, track_angle);  // or track_angle if in radians
     df_with_pos.replace("X", Series::new("X".into(), rotated.slice(s![..,0]).to_vec())).unwrap();
     df_with_pos.replace("Y", Series::new("Y".into(), rotated.slice(s![..,1]).to_vec())).unwrap();
-    // df_with_pos = df_with_pos.lazy().filter(col("Frame").lt(lit(5000))).collect().unwrap();
+    df_with_pos = df_with_pos.lazy().filter(col("Frame").lt(lit(9000))).collect().unwrap();
 
     // println!("Loaded positional data for {:?}", df_with_pos);
     
