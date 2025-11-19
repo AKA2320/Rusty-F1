@@ -129,7 +129,7 @@ pub fn create_animated_race_plot(
     let play_button = Button::new()
         .label("▶")
         .method(ButtonMethod::Animate)
-        .args(json!([null,{"frame": {"duration": 10, "redraw": false}, "mode": "next", "fromcurrent": true, "transition": {"duration": 2, "easing": "linear"}}]));
+        .args(json!([null,{"frame": {"duration": 200, "redraw": false}, "mode": "next", "fromcurrent": true, "transition": {"duration": 200, "easing": "linear"}}]));
     let pause_button = Button::new()
         .label("⏸")
         .method(ButtonMethod::Animate)
