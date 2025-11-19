@@ -5,6 +5,7 @@ use ndarray::{Array2, s, array};
 use polars::prelude::*;
 use indexmap::IndexMap;
 use serde_json::json;
+use rayon::prelude::*;
 
 
 pub fn plot_track(rotated_track: Array2<f64>) {
@@ -31,6 +32,12 @@ pub fn create_animated_race_plot(
     abv: &IndexMap<String, String>,
     team_colors: &IndexMap<String, String>,
 ) -> Plot {
+    #[derive(Clone)]
+    struct DriverTraceData {
+        x: Vec<f64>,
+        y: Vec<f64>,
+        driver: String,
+    }
     let mut plot = Plot::new();
     // Create track trace
     let track_trace = Scatter::new(rotated_track.slice(s![.., 0]).to_vec(),
@@ -73,25 +80,42 @@ pub fn create_animated_race_plot(
 
     // Add frames
     println!("Plotting total frames {}", frames_vec.len());
-    for &frame_val in frames_vec {
+    let chunk_size = 100;
+    let frames_data: Vec<Vec<DriverTraceData>> = (0..frames_vec.len()).into_par_iter().step_by(chunk_size).flat_map(|start| {
+        let end = (start + chunk_size).min(frames_vec.len());
+        let mut result = vec![];
+        for i in start..end {
+            let frame_val = frames_vec[i];
+            let frame_data: Vec<DriverTraceData> = abv.keys().map(|driver| {
+                let filtered = df_with_pos.clone().lazy()
+                    .filter(col("Frame").eq(lit(frame_val)).and(col("Driver").eq(lit(driver.as_str()))))
+                    .select(&[col("X"), col("Y")])
+                    .collect().unwrap();
+                let x: Vec<f64> = filtered.column("X").unwrap().f64().unwrap().into_no_null_iter().collect();
+                let y: Vec<f64> = filtered.column("Y").unwrap().f64().unwrap().into_no_null_iter().collect();
+                DriverTraceData {
+                    x,
+                    y,
+                    driver: driver.clone(),
+                }
+            }).collect();
+            result.push(frame_data);
+        }
+        result
+    }).collect();
+
+    for (frame_val, frame_data) in frames_vec.iter().zip(frames_data.iter()) {
         let mut frame_traces: Traces = Traces::new();
         frame_traces.push(track_trace.clone());
-        for driver in abv.keys() {
-            let filtered = df_with_pos.clone().lazy()
-                .filter(col("Frame").eq(lit(frame_val)).and(col("Driver").eq(lit(driver.as_str()))))
-                .select(&[col("X"), col("Y")])
-                .collect().unwrap();
-            let x: Vec<f64> = filtered.column("X").unwrap().f64().unwrap().into_no_null_iter().collect();
-            let y: Vec<f64> = filtered.column("Y").unwrap().f64().unwrap().into_no_null_iter().collect();
-
-            let trace: Box<dyn Trace> = Scatter::new(x, y)
-                    .mode(Mode::Markers)
-                    .text_array(vec![driver.clone()])
-                    .marker(Marker::new().color(team_colors.get(driver).unwrap().clone()))
-                    .name(driver.clone())
-                    .legend_group(driver.clone())
-                    .show_legend(true)
-                    .ids(vec![driver.clone()]);
+        for data in frame_data {
+            let trace: Box<dyn Trace> = Scatter::new(data.x.clone(), data.y.clone())
+                .mode(Mode::Markers)
+                .text_array(vec![data.driver.clone()])
+                .marker(Marker::new().color(team_colors.get(&data.driver).unwrap().clone()))
+                .name(data.driver.clone())
+                .legend_group(data.driver.clone())
+                .show_legend(true)
+                .ids(vec![data.driver.clone()]);
             frame_traces.push(trace);
         }
         let frame = Frame::new()

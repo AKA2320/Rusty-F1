@@ -2518,6 +2518,7 @@ dependencies = [
  "ndarray",
  "plotly",
  "polars",
+ "rayon",
  "serde",
  "serde_json",
 ]
