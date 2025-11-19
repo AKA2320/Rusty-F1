@@ -65,4 +65,5 @@ jobs:
           gh release create "$tag" track.html\
               --repo="$GITHUB_REPOSITORY" \
               --title="${GITHUB_REPOSITORY#*/} ${tag#v}" \
-              --generate-notes 
+              --generate-notes \
+              --force
