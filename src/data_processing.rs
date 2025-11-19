@@ -95,7 +95,7 @@ pub fn get_frame_values(df: &DataFrame) -> Vec<i32> {
         .sort(SortOptions::default()).unwrap()
         .i32().unwrap()
         .into_no_null_iter()
-        .filter(|&value| value % 10 == 0)
+        .filter(|&value| value % 8 == 0)
         .collect()
 }
 
