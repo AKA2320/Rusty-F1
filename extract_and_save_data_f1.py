@@ -4,7 +4,7 @@ import json
 import os
 
 
-session = fastf1.get_session(2023,'Monza','R')
+session = fastf1.get_session(2023,'Monaco','R')
 session.load(telemetry=True)
 
 
