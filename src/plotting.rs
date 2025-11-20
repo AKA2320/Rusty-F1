@@ -53,7 +53,9 @@ pub fn create_animated_race_plot(
     layout = layout.x_axis(Axis::new().visible(false))
                     .y_axis(Axis::new().visible(false))
                     .title("Live Grand Prix")
-                    .legend(Legend::new().title("Driver"));
+                    .width(9).height(7)
+                    .plot_background_color("black")
+                    .margin(Margin::new().left(1).right(1).top(1).bottom(1));;
 
     // Add track trace
     plot.add_trace(track_trace.clone());
@@ -75,7 +77,7 @@ pub fn create_animated_race_plot(
             .marker(Marker::new().color(team_colors.get(driver).unwrap().clone()))
             .name(driver.clone())
             .legend_group(driver.clone())
-            .show_legend(true)
+            .show_legend(false)
             .ids(vec![driver.clone()]);
         plot.add_trace(trace);
     }
