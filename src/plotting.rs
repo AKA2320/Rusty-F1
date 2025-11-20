@@ -68,8 +68,10 @@ pub fn create_animated_race_plot(
         let y: Vec<f64> = filtered.column("Y").unwrap().f64().unwrap().into_no_null_iter().collect();
 
         let trace: Box<dyn Trace> = Scatter::new(x, y)
-            .mode(Mode::Markers)
-            .text_array(vec![driver.clone()])
+            .mode(Mode::MarkersText)
+            .text(driver.clone())
+            .text_position(Position::TopRight)
+            .text_font(Font::new().color("white"))
             .marker(Marker::new().color(team_colors.get(driver).unwrap().clone()))
             .name(driver.clone())
             .legend_group(driver.clone())
@@ -80,7 +82,7 @@ pub fn create_animated_race_plot(
 
     // Add frames
     println!("Plotting total frames {}", frames_vec.len());
-    let chunk_size = 100;
+    let chunk_size = 50;
     let frames_data: Vec<Vec<DriverTraceData>> = (0..frames_vec.len()).into_par_iter().step_by(chunk_size).flat_map(|start| {
         let end = (start + chunk_size).min(frames_vec.len());
         let mut result = vec![];
