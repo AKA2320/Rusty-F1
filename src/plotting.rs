@@ -109,8 +109,10 @@ pub fn create_animated_race_plot(
         frame_traces.push(track_trace.clone());
         for data in frame_data {
             let trace: Box<dyn Trace> = Scatter::new(data.x.clone(), data.y.clone())
-                .mode(Mode::Markers)
+                .mode(Mode::MarkersText)
                 .text_array(vec![data.driver.clone()])
+                .text_position(Position::TopRight)
+                .text_font(Font::new().color("white"))
                 .marker(Marker::new().color(team_colors.get(&data.driver).unwrap().clone()))
                 .name(data.driver.clone())
                 .legend_group(data.driver.clone())
